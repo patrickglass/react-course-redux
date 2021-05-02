@@ -28,3 +28,9 @@ The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+
+## References
+
+Based on the course and related project
+
+https://github.com/coryhouse/react-flux-building-applications
