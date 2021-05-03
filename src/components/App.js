@@ -1,12 +1,14 @@
 import React from "react";
 import HomePage from "./HomePage";
 import AboutPage from "./AboutPage";
+import CoursesPage from "./CoursesPage";
 import Header from "./common/Header";
 
 const App = () => {
   function getPage() {
     const route = window.location.pathname;
     if (route === "/about") return <AboutPage />;
+    else if (route === "/courses") return <CoursesPage />;
     return <HomePage />;
   }
 
