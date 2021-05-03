@@ -19,6 +19,18 @@ const ManageCoursePage = (props) => {
     category: "",
   });
 
+  function formIsValid() {
+    const _errors = {};
+
+    if (!course.title) _errors.title = "Title is required";
+    if (!course.authorId) _errors.authorId = "Author is required";
+    if (!course.category) _errors.category = "Category is required";
+
+    setErrors(_errors);
+    // Form is valid if errors object has no properties
+    return Object.keys(_errors).length == 0;
+  }
+
   const handleChange = (event) => {
     console.log("change", event.target.name, event.target.value, event);
     setCourse({
@@ -29,6 +41,9 @@ const ManageCoursePage = (props) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+
+    if (!formIsValid()) return;
+
     saveCourse(course).then(() => {
       props.history.push("/courses");
       toast.success("course saved!");
