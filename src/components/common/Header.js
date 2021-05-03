@@ -2,6 +2,7 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 
 const Header = () => {
+  const activeStyle = { color: "red" };
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <a className="navbar-brand" href="/">
@@ -22,19 +23,23 @@ const Header = () => {
       <div className="collapse navbar-collapse" id="navbarSupportedContent">
         <ul className="navbar-nav mr-auto">
           <li className="nav-item">
-            <NavLink to="/" className="nav-link">
+            <NavLink to="/" activeStyle={activeStyle} className="nav-link">
               Home
             </NavLink>
           </li>
 
           <li className="nav-item">
-            <NavLink to="/courses" className="nav-link">
+            <NavLink
+              to="/courses"
+              activeStyle={activeStyle}
+              className="nav-link"
+            >
               Courses
             </NavLink>
           </li>
 
           <li className="nav-item">
-            <NavLink to="/about" className="nav-link">
+            <NavLink to="/about" activeStyle={activeStyle} className="nav-link">
               About
             </NavLink>
           </li>
