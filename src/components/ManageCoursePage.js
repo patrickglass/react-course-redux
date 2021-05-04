@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CourseForm from "./CourseForm";
-import { saveCourse } from "../api/courseApi";
+import { saveCourse, getCourseBySlug } from "../api/courseApi";
 import { toast } from "react-toastify";
 
 const ManageCoursePage = (props) => {
@@ -11,13 +11,14 @@ const ManageCoursePage = (props) => {
     authorId: null,
     category: "",
   });
-  const [errors, setErrors] = useState({
-    id: "",
-    slug: "",
-    title: "",
-    authorId: "",
-    category: "",
-  });
+  const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    const slug = props.match.params.slug;
+    if (slug) {
+      getCourseBySlug(slug).then((_course) => setCourse(_course));
+    }
+  }, [props.match.params.slug]);
 
   function formIsValid() {
     const _errors = {};
@@ -28,7 +29,7 @@ const ManageCoursePage = (props) => {
 
     setErrors(_errors);
     // Form is valid if errors object has no properties
-    return Object.keys(_errors).length == 0;
+    return Object.keys(_errors).length === 0;
   }
 
   const handleChange = (event) => {
@@ -59,7 +60,6 @@ const ManageCoursePage = (props) => {
         onChange={handleChange}
         errors={errors}
       />
-      {props.match.params.slug}
     </>
   );
 };
