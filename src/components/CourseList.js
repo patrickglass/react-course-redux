@@ -10,6 +10,7 @@ const CourseList = (props) => {
           <th>Title</th>
           <th>Author ID</th>
           <th>Category</th>
+          <th>&nbsp;</th>
         </tr>
       </thead>
       <tbody>
@@ -21,6 +22,17 @@ const CourseList = (props) => {
               </td>
               <td>{course.authorId}</td>
               <td>{course.category}</td>
+              <td>
+                <button
+                  className="btn btn-danger"
+                  onClick={() => {
+                    debugger;
+                    props.onDelete(course.id);
+                  }}
+                >
+                  Delete
+                </button>
+              </td>
             </tr>
           );
         })}
@@ -31,6 +43,7 @@ const CourseList = (props) => {
 };
 
 CourseList.propTypes = {
+  onDelete: PropTypes.func.isRequired,
   courses: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number.isRequired,

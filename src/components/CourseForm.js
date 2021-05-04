@@ -44,6 +44,12 @@ function CourseForm(props) {
       />
 
       <input type="submit" value="Save" className="btn btn-primary" />
+      <input
+        type="button"
+        value="Delete"
+        className="btn btn-danger"
+        onClick={props.onDelete}
+      />
     </form>
   );
 }
@@ -52,6 +58,7 @@ CourseForm.propTypes = {
   course: PropTypes.object.isRequired,
   onSubmit: PropTypes.func.isRequired,
   onChange: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
   errors: PropTypes.object.isRequired,
 };
 

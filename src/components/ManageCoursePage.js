@@ -51,12 +51,18 @@ const ManageCoursePage = (props) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
     if (!formIsValid()) return;
-
     courseActions.saveCourse(course).then(() => {
       props.history.push("/courses");
       toast.success("course saved!");
+    });
+  };
+
+  const handleDelete = (event) => {
+    console.log("course deleted", course, event);
+    courseActions.deleteCourse(course.id).then(() => {
+      props.history.push("/courses");
+      toast.warning("course deleted!");
     });
   };
 
@@ -67,6 +73,7 @@ const ManageCoursePage = (props) => {
         course={course}
         onSubmit={handleSubmit}
         onChange={handleChange}
+        onDelete={handleDelete}
         errors={errors}
       />
     </>
