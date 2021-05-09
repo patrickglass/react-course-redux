@@ -1,16 +1,23 @@
 import actionTypes from "../../actions/actionTypes";
 import * as courseApi from "../../api/courseApi";
 
-const createCourse = (course) => {
-  return {
-    type: actionTypes.CREATE_COURSE,
-    course,
-  };
-};
+// const createCourse = (course) => {
+//   return {
+//     type: actionTypes.CREATE_COURSE,
+//     course,
+//   };
+// };
 
-const updateCourse = (course) => {
+// const updateCourse = (course) => {
+//   return {
+//     type: actionTypes.UPDATE_COURSE,
+//     course,
+//   };
+// };
+
+const saveCourse = (course) => {
   return {
-    type: actionTypes.UPDATE_COURSE,
+    type: course.id ? actionTypes.UPDATE_COURSE : actionTypes.CREATE_COURSE,
     course,
   };
 };
@@ -39,10 +46,4 @@ const loadCourses = () => {
   };
 };
 
-export {
-  createCourse,
-  updateCourse,
-  deleteCourse,
-  loadCourses,
-  loadCoursesSuccess,
-};
+export { saveCourse, deleteCourse, loadCourses, loadCoursesSuccess };

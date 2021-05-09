@@ -7,7 +7,6 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
 const ManageCoursePage = (props) => {
-  const [courses, setCourses] = useState(courseStore.getCourses());
   const [course, setCourse] = useState({
     id: null,
     slug: "",
@@ -18,22 +17,16 @@ const ManageCoursePage = (props) => {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    // courseStore.addChangeListener(onChange);
     const slug = props.match.params.slug;
-    if (courses.length === 0) {
-      // TODO: FIXME: Need to load data from api
+    if (props.courses.length === 0) {
       props.actions.loadCourses().catch((error) => {
         alert("Loading courses failed" + error);
       });
     } else if (slug) {
-      setCourse(courseStore.getCourseBySlug(slug));
+      // FIXME: TODO: Need to convert this to redux
+      // setCourse(courseStore.getCourseBySlug(slug));
     }
-    // return () => courseStore.removeChangeListener(onChange);
-  }, [courses.length, props.match.params.slug]);
-
-  // function onChange() {
-  //   setCourses(courseStore.getCourses());
-  // }
+  }, [props.courses.length, props.match.params.slug, props.actions]);
 
   function formIsValid() {
     const _errors = {};
@@ -58,15 +51,13 @@ const ManageCoursePage = (props) => {
     event.preventDefault();
     if (!formIsValid()) return;
     console.log(course);
-    props.actions.createCourse(course);
-    // TODO: FIXME: can be enabled once we have state working on list page
-    // props.history.push("/courses");
-    // toast.success("course saved!");
+    props.actions.saveCourse(course);
+    props.history.push("/courses");
+    toast.success("course saved!");
   };
 
   const handleDelete = (event) => {
     console.log("course deleted", course, event);
-    props.actions.createCourse(course);
     props.actions.deleteCourse(course.id);
     props.history.push("/courses");
     toast.warning("course deleted!");
@@ -82,9 +73,6 @@ const ManageCoursePage = (props) => {
         onDelete={handleDelete}
         errors={errors}
       />
-      {props.courses.map((course) => (
-        <div key={course.id}>{course.title}</div>
-      ))}
     </>
   );
 };

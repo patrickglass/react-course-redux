@@ -1,22 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import courseStore from "../stores/courseStore";
+
 import CourseList from "./CourseList";
 import { Link } from "react-router-dom";
-import { loadCourses, deleteCourse } from "../actions/courseActions";
+import * as courseActions from "../redux/actions/courseActions";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 
-const CoursesPage = () => {
-  const [courses, setCourses] = useState(courseStore.getCourses());
-
+const CoursesPage = (props) => {
   useEffect(() => {
-    courseStore.addChangeListener(onChange);
-    if (courseStore.getCourses().length === 0) loadCourses();
-    // Cleanup on unmount
-    return () => courseStore.removeChangeListener(onChange);
-  }, []);
-
-  function onChange() {
-    setCourses(courseStore.getCourses());
-  }
+    if (courseStore.getCourses().length === 0) {
+      props.actions.loadCourses().catch((error) => {
+        alert("Loading courses failed" + error);
+      });
+    }
+  }, [props.actions]);
 
   return (
     <>
@@ -24,9 +22,24 @@ const CoursesPage = () => {
       <Link className="btn btn-primary" to="/course">
         Add Course
       </Link>
-      <CourseList courses={courses} onDelete={deleteCourse} />
+      <CourseList
+        courses={props.courses}
+        onDelete={courseActions.deleteCourse}
+      />
     </>
   );
 };
 
-export default CoursesPage;
+const mapStateToProps = (state) => {
+  return {
+    courses: state.courses,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    actions: bindActionCreators(courseActions, dispatch),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(CoursesPage);
