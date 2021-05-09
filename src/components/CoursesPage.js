@@ -15,16 +15,8 @@ const CoursesPage = () => {
   }, []);
 
   function onChange() {
-    debugger;
     setCourses(courseStore.getCourses());
   }
-
-  // function handleDelete(courseId) {
-  //   console.log("list delete course: ", courseId);
-  //   deleteCourse(courseId);
-  //   // setCourses(courseStore.getCourses());
-  //   // loadCourses();
-  // }
 
   return (
     <>

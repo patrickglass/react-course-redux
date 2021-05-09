@@ -46,7 +46,6 @@ Dispatcher.register((action) => {
       store.emitChange();
       break;
     case actionTypes.DELETE_COURSE:
-      debugger;
       // should check if filter is a better choice here
       // const index = _courses.findIndex(
       //   (item) => item.id === parseInt(action.id, 10)

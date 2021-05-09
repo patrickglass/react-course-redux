@@ -26,7 +26,6 @@ const CourseList = (props) => {
                 <button
                   className="btn btn-danger"
                   onClick={() => {
-                    debugger;
                     props.onDelete(course.id);
                   }}
                 >

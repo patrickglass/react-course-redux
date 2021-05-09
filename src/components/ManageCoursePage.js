@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import CourseForm from "./CourseForm";
 import courseStore from "../stores/courseStore";
 import { toast } from "react-toastify";
-import * as courseActions from "../actions/courseActions";
+import * as courseActions from "../redux/actions/courseActions";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 
 const ManageCoursePage = (props) => {
   const [courses, setCourses] = useState(courseStore.getCourses());
@@ -16,19 +18,22 @@ const ManageCoursePage = (props) => {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    courseStore.addChangeListener(onChange);
+    // courseStore.addChangeListener(onChange);
     const slug = props.match.params.slug;
     if (courses.length === 0) {
-      courseActions.loadCourses();
+      // TODO: FIXME: Need to load data from api
+      props.actions.loadCourses().catch((error) => {
+        alert("Loading courses failed" + error);
+      });
     } else if (slug) {
       setCourse(courseStore.getCourseBySlug(slug));
     }
-    return () => courseStore.removeChangeListener(onChange);
+    // return () => courseStore.removeChangeListener(onChange);
   }, [courses.length, props.match.params.slug]);
 
-  function onChange() {
-    setCourses(courseStore.getCourses());
-  }
+  // function onChange() {
+  //   setCourses(courseStore.getCourses());
+  // }
 
   function formIsValid() {
     const _errors = {};
@@ -52,18 +57,19 @@ const ManageCoursePage = (props) => {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (!formIsValid()) return;
-    courseActions.saveCourse(course).then(() => {
-      props.history.push("/courses");
-      toast.success("course saved!");
-    });
+    console.log(course);
+    props.actions.createCourse(course);
+    // TODO: FIXME: can be enabled once we have state working on list page
+    // props.history.push("/courses");
+    // toast.success("course saved!");
   };
 
   const handleDelete = (event) => {
     console.log("course deleted", course, event);
-    courseActions.deleteCourse(course.id).then(() => {
-      props.history.push("/courses");
-      toast.warning("course deleted!");
-    });
+    props.actions.createCourse(course);
+    props.actions.deleteCourse(course.id);
+    props.history.push("/courses");
+    toast.warning("course deleted!");
   };
 
   return (
@@ -76,8 +82,24 @@ const ManageCoursePage = (props) => {
         onDelete={handleDelete}
         errors={errors}
       />
+      {props.courses.map((course) => (
+        <div key={course.id}>{course.title}</div>
+      ))}
     </>
   );
 };
 
-export default ManageCoursePage;
+const mapStateToProps = (state) => {
+  return {
+    courses: state.courses,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    actions: bindActionCreators(courseActions, dispatch),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ManageCoursePage);
+// export default connect(mapStateToProps)(ManageCoursePage);

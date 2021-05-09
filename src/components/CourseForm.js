@@ -2,7 +2,7 @@ import React from "react";
 import TextInput from "./common/TextInput";
 import PropTypes from "prop-types";
 
-function CourseForm(props) {
+const CourseForm = (props) => {
   return (
     <form onSubmit={props.onSubmit}>
       <TextInput
@@ -52,7 +52,7 @@ function CourseForm(props) {
       />
     </form>
   );
-}
+};
 
 CourseForm.propTypes = {
   course: PropTypes.object.isRequired,
