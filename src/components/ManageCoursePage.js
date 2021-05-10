@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import CourseForm from "./CourseForm";
-import courseStore from "../stores/courseStore";
 import { toast } from "react-toastify";
 import * as courseActions from "../redux/actions/courseActions";
+import * as authorActions from "../redux/actions/authorActions";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
@@ -12,6 +12,7 @@ const ManageCoursePage = (props) => {
     slug: "",
     title: "",
     authorId: null,
+    authorName: null,
     category: "",
   });
   const [errors, setErrors] = useState({});
@@ -26,7 +27,17 @@ const ManageCoursePage = (props) => {
       // FIXME: TODO: Need to convert this to redux
       // setCourse(courseStore.getCourseBySlug(slug));
     }
-  }, [props.courses.length, props.match.params.slug, props.actions]);
+    if (props.authors.length === 0) {
+      props.actions.loadAuthors().catch((error) => {
+        alert("Loading authors failed" + error);
+      });
+    }
+  }, [
+    props.courses.length,
+    props.authors.length,
+    props.match.params.slug,
+    props.actions,
+  ]);
 
   function formIsValid() {
     const _errors = {};
@@ -51,6 +62,7 @@ const ManageCoursePage = (props) => {
     event.preventDefault();
     if (!formIsValid()) return;
     console.log(course);
+    debugger;
     props.actions.saveCourse(course);
     props.history.push("/courses");
     toast.success("course saved!");
@@ -68,6 +80,7 @@ const ManageCoursePage = (props) => {
       <h2>Manage Course</h2>
       <CourseForm
         course={course}
+        authors={props.authors}
         onSubmit={handleSubmit}
         onChange={handleChange}
         onDelete={handleDelete}
@@ -79,15 +92,28 @@ const ManageCoursePage = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    courses: state.courses,
+    courses:
+      state.authors.length === 0
+        ? []
+        : state.courses.map((course) => {
+            return {
+              ...course,
+              authorName: state.authors.find((a) => a.id === course.authorId)
+                .name,
+            };
+          }),
+    authors: state.authors,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    actions: bindActionCreators(courseActions, dispatch),
+    actions: {
+      loadAuthors: bindActionCreators(authorActions.loadAuthors, dispatch),
+      saveCourse: bindActionCreators(courseActions.saveCourse, dispatch),
+      loadCourses: bindActionCreators(courseActions.loadCourses, dispatch),
+    },
   };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ManageCoursePage);
-// export default connect(mapStateToProps)(ManageCoursePage);

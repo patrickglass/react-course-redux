@@ -1,4 +1,4 @@
-import actionTypes from "../../actions/actionTypes";
+import actionTypes from "../actions/actionTypes";
 
 const courseReducer = (state = [], action) => {
   switch (action.type) {

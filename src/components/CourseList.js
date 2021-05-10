@@ -8,7 +8,7 @@ const CourseList = (props) => (
       <tr>
         <th>&nbsp;</th>
         <th>Title</th>
-        <th>Author ID</th>
+        <th>Author</th>
         <th>Category</th>
         <th>&nbsp;</th>
       </tr>
@@ -28,7 +28,7 @@ const CourseList = (props) => (
             <td>
               <Link to={"/course/" + course.slug}>{course.title}</Link>
             </td>
-            <td>{course.authorId}</td>
+            <td>{course.authorName}</td>
             <td>{course.category}</td>
             <td>
               <button
@@ -52,9 +52,10 @@ CourseList.propTypes = {
   onDelete: PropTypes.func.isRequired,
   courses: PropTypes.arrayOf(
     PropTypes.shape({
-      // id: PropTypes.number.isRequired,
+      id: PropTypes.number.isRequired,
       title: PropTypes.string.isRequired,
       authorId: PropTypes.number.isRequired,
+      authorName: PropTypes.number.isRequired,
       category: PropTypes.string.isRequired,
     })
   ).isRequired,

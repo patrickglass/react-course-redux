@@ -1,4 +1,4 @@
-import actionTypes from "../../actions/actionTypes";
+import actionTypes from "./actionTypes";
 import * as courseApi from "../../api/courseApi";
 
 // const createCourse = (course) => {
