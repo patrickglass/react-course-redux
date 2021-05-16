@@ -1,24 +1,32 @@
 import actionTypes from "./actionTypes";
 import * as courseApi from "../../api/courseApi";
 
-// const createCourse = (course) => {
-//   return {
-//     type: actionTypes.CREATE_COURSE,
-//     course,
-//   };
-// };
+const createCourseSuccess = (course) => {
+  return {
+    type: actionTypes.CREATE_COURSE_SUCCESS,
+    course,
+  };
+};
 
-// const updateCourse = (course) => {
-//   return {
-//     type: actionTypes.UPDATE_COURSE,
-//     course,
-//   };
-// };
+const updateCourseSuccess = (course) => {
+  return {
+    type: actionTypes.LOAD_AUTHORS_SUCCESS,
+    course,
+  };
+};
 
 const saveCourse = (course) => {
-  return {
-    type: course.id ? actionTypes.UPDATE_COURSE : actionTypes.CREATE_COURSE,
-    course,
+  return function (dispatch) {
+    return courseApi
+      .saveCourse(course)
+      .then((savedCourse) => {
+        course.id
+          ? dispatch(updateCourseSuccess(savedCourse))
+          : dispatch(createCourseSuccess(savedCourse));
+      })
+      .catch((error) => {
+        throw error;
+      });
   };
 };
 

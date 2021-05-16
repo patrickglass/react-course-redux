@@ -1,38 +1,50 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import CourseList from "./CourseList";
 import { Link } from "react-router-dom";
-import * as courseActions from "../redux/actions/courseActions";
-import * as authorActions from "../redux/actions/authorActions";
+import {
+  loadCourses,
+  saveCourse,
+  deleteCourse,
+} from "../redux/actions/courseActions";
+import { loadAuthors } from "../redux/actions/authorActions";
 import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
+import { Redirect } from "react-router-dom";
 
-const CoursesPage = (props) => {
+const CoursesPage = ({
+  courses,
+  authors,
+  loadAuthors,
+  loadCourses,
+  saveCourse,
+  deleteCourse,
+}) => {
+  const [redirectToAddCoursesPage, setRedirectToAddCoursesPage] = useState(
+    false
+  );
+
   useEffect(() => {
-    if (props.courses.length === 0) {
-      props.actions.loadCourses().catch((error) => {
+    if (courses.length === 0) {
+      loadCourses().catch((error) => {
         alert("Loading courses failed" + error);
       });
     }
-    if (props.authors.length === 0) {
-      props.actions.loadAuthors().catch((error) => {
+    if (authors.length === 0) {
+      loadAuthors().catch((error) => {
         alert("Loading authors failed" + error);
       });
     }
-  }, [props.actions, props.courses.length, props.authors.length]);
+  }, [courses.length, authors.length, loadCourses, loadAuthors]);
 
-  console.log(props.courses);
+  console.log(courses);
 
   return (
     <>
+      {redirectToAddCoursesPage && <Redirect to="/course" />}
       <h2>Courses</h2>
       <Link className="btn btn-primary" to="/course">
         Add Course
       </Link>
-      <CourseList
-        courses={props.courses}
-        authors={props.authors}
-        onDelete={props.actions.deleteCourse}
-      />
+      <CourseList courses={courses} authors={authors} onDelete={deleteCourse} />
     </>
   );
 };
@@ -53,15 +65,11 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    actions: {
-      saveCourse: bindActionCreators(courseActions.saveCourse, dispatch),
-      deleteCourse: bindActionCreators(courseActions.deleteCourse, dispatch),
-      loadCourses: bindActionCreators(courseActions.loadCourses, dispatch),
-      loadAuthors: bindActionCreators(authorActions.loadAuthors, dispatch),
-    },
-  };
+const mapDispatchToProps = {
+  saveCourse,
+  deleteCourse,
+  loadCourses,
+  loadAuthors,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CoursesPage);

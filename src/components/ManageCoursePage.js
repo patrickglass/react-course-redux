@@ -1,43 +1,44 @@
 import React, { useState, useEffect } from "react";
 import CourseForm from "./CourseForm";
 import { toast } from "react-toastify";
-import * as courseActions from "../redux/actions/courseActions";
-import * as authorActions from "../redux/actions/authorActions";
+import {
+  loadCourses,
+  saveCourse,
+  deleteCourse,
+} from "../redux/actions/courseActions";
+import { loadAuthors } from "../redux/actions/authorActions";
 import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
 
-const ManageCoursePage = (props) => {
-  const [course, setCourse] = useState({
-    id: null,
-    slug: "",
-    title: "",
-    authorId: null,
-    authorName: null,
-    category: "",
-  });
+const ManageCoursePage = ({
+  match,
+  history,
+  courses,
+  authors,
+  loadCourses,
+  loadAuthors,
+  deleteCourse,
+  saveCourse,
+  ...props
+}) => {
+  const [course, setCourse] = useState({ ...props.course });
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    const slug = props.match.params.slug;
-    if (props.courses.length === 0) {
-      props.actions.loadCourses().catch((error) => {
+    const slug = match.params.slug;
+    if (courses.length === 0) {
+      loadCourses().catch((error) => {
         alert("Loading courses failed" + error);
       });
     } else if (slug) {
       // FIXME: TODO: Need to convert this to redux
       // setCourse(courseStore.getCourseBySlug(slug));
     }
-    if (props.authors.length === 0) {
-      props.actions.loadAuthors().catch((error) => {
+    if (authors.length === 0) {
+      loadAuthors().catch((error) => {
         alert("Loading authors failed" + error);
       });
     }
-  }, [
-    props.courses.length,
-    props.authors.length,
-    props.match.params.slug,
-    props.actions,
-  ]);
+  }, []);
 
   function formIsValid() {
     const _errors = {};
@@ -62,16 +63,15 @@ const ManageCoursePage = (props) => {
     event.preventDefault();
     if (!formIsValid()) return;
     console.log(course);
-    debugger;
-    props.actions.saveCourse(course);
-    props.history.push("/courses");
+    saveCourse(course);
+    history.push("/courses");
     toast.success("course saved!");
   };
 
   const handleDelete = (event) => {
     console.log("course deleted", course, event);
-    props.actions.deleteCourse(course.id);
-    props.history.push("/courses");
+    deleteCourse(course.id);
+    history.push("/courses");
     toast.warning("course deleted!");
   };
 
@@ -80,7 +80,7 @@ const ManageCoursePage = (props) => {
       <h2>Manage Course</h2>
       <CourseForm
         course={course}
-        authors={props.authors}
+        authors={authors}
         onSubmit={handleSubmit}
         onChange={handleChange}
         onDelete={handleDelete}
@@ -90,30 +90,44 @@ const ManageCoursePage = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
+function getCourseBySlug(courses, slug) {
+  return courses.find((course) => course.slug === slug) || null;
+}
+
+const mapStateToProps = (state, ownProps) => {
+  const slug = ownProps.match.params.slug;
+  const course = slug
+    ? {
+        id: null,
+        slug: "",
+        title: "",
+        authorId: null,
+        authorName: null,
+        category: "",
+      }
+    : getCourseBySlug(state.courses, slug);
+  const courses =
+    state.authors.length === 0
+      ? []
+      : state.courses.map((course) => {
+          return {
+            ...course,
+            authorName: state.authors.find((a) => a.id === course.authorId)
+              .name,
+          };
+        });
   return {
-    courses:
-      state.authors.length === 0
-        ? []
-        : state.courses.map((course) => {
-            return {
-              ...course,
-              authorName: state.authors.find((a) => a.id === course.authorId)
-                .name,
-            };
-          }),
+    course,
+    courses,
     authors: state.authors,
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    actions: {
-      loadAuthors: bindActionCreators(authorActions.loadAuthors, dispatch),
-      saveCourse: bindActionCreators(courseActions.saveCourse, dispatch),
-      loadCourses: bindActionCreators(courseActions.loadCourses, dispatch),
-    },
-  };
+const mapDispatchToProps = {
+  loadAuthors,
+  saveCourse,
+  deleteCourse,
+  loadCourses,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ManageCoursePage);
