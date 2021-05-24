@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CourseList from "./CourseList";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import {
   loadCourses,
   saveCourse,
@@ -9,14 +10,18 @@ import {
 import { loadAuthors } from "../redux/actions/authorActions";
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
+import Spinner from "./common/Spinner";
+import { propTypes } from "react-bootstrap/esm/Image";
 
 const CoursesPage = ({
+  history,
   courses,
   authors,
   loadAuthors,
   loadCourses,
   saveCourse,
   deleteCourse,
+  loading,
 }) => {
   const [redirectToAddCoursesPage, setRedirectToAddCoursesPage] = useState(
     false
@@ -37,14 +42,30 @@ const CoursesPage = ({
 
   console.log(courses);
 
+  const handleDelete = (id) => {
+    console.log("course deleted", id);
+    deleteCourse(id);
+    toast.warning("course deleted!");
+  };
+
   return (
     <>
       {redirectToAddCoursesPage && <Redirect to="/course" />}
       <h2>Courses</h2>
-      <Link className="btn btn-primary" to="/course">
-        Add Course
-      </Link>
-      <CourseList courses={courses} authors={authors} onDelete={deleteCourse} />
+      {loading ? (
+        <Spinner />
+      ) : (
+        <>
+          <Link className="btn btn-primary" to="/course">
+            Add Course
+          </Link>
+          <CourseList
+            courses={courses}
+            authors={authors}
+            onDelete={handleDelete}
+          />
+        </>
+      )}
     </>
   );
 };
@@ -62,6 +83,7 @@ const mapStateToProps = (state) => {
             };
           }),
     authors: state.authors,
+    loading: state.apiCallsInProgress > 0,
   };
 };
 

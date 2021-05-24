@@ -55,7 +55,7 @@ CourseList.propTypes = {
       id: PropTypes.number.isRequired,
       title: PropTypes.string.isRequired,
       authorId: PropTypes.number.isRequired,
-      authorName: PropTypes.number.isRequired,
+      authorName: PropTypes.string.isRequired,
       category: PropTypes.string.isRequired,
     })
   ).isRequired,

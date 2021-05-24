@@ -26,7 +26,9 @@ const CourseForm = (props) => {
           >
             <option value="" />
             {props.authors.map((author) => (
-              <option value={author.id}>{author.name}</option>
+              <option key={author.id} value={author.id}>
+                {author.name}
+              </option>
             ))}
           </select>
         </div>

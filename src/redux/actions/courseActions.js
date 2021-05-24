@@ -1,5 +1,6 @@
 import actionTypes from "./actionTypes";
 import * as courseApi from "../../api/courseApi";
+import { beginApiCall } from "./apiStatusActions";
 
 const createCourseSuccess = (course) => {
   return {
@@ -17,6 +18,7 @@ const updateCourseSuccess = (course) => {
 
 const saveCourse = (course) => {
   return function (dispatch) {
+    dispatch(beginApiCall());
     return courseApi
       .saveCourse(course)
       .then((savedCourse) => {
@@ -30,19 +32,13 @@ const saveCourse = (course) => {
   };
 };
 
-const deleteCourse = (id) => {
-  return {
-    type: actionTypes.DELETE_COURSE,
-    id,
-  };
-};
-
 const loadCoursesSuccess = (courses) => {
   return { type: actionTypes.LOAD_COURSES_SUCCESS, courses };
 };
 
 const loadCourses = () => {
   return function (dispatch) {
+    dispatch(beginApiCall());
     return courseApi
       .getCourses()
       .then((courses) => {
@@ -54,4 +50,31 @@ const loadCourses = () => {
   };
 };
 
-export { saveCourse, deleteCourse, loadCourses, loadCoursesSuccess };
+const deleteCourseSuccess = (id) => {
+  return {
+    type: actionTypes.DELETE_COURSE_SUCCESS,
+    id,
+  };
+};
+
+const deleteCourse = (id) => {
+  return function (dispatch) {
+    dispatch(beginApiCall());
+    return courseApi
+      .deleteCourse(id)
+      .then((savedId) => {
+        dispatch(deleteCourseSuccess(savedId));
+      })
+      .catch((error) => {
+        throw error;
+      });
+  };
+};
+
+export {
+  saveCourse,
+  deleteCourse,
+  deleteCourseSuccess,
+  loadCourses,
+  loadCoursesSuccess,
+};

@@ -24,21 +24,27 @@ const ManageCoursePage = ({
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    const slug = match.params.slug;
     if (courses.length === 0) {
       loadCourses().catch((error) => {
         alert("Loading courses failed" + error);
       });
-    } else if (slug) {
-      // FIXME: TODO: Need to convert this to redux
-      // setCourse(courseStore.getCourseBySlug(slug));
+    } else {
+      console.log("props.course", props.course);
+      setCourse({ ...props.course });
     }
     if (authors.length === 0) {
       loadAuthors().catch((error) => {
         alert("Loading authors failed" + error);
       });
     }
-  }, []);
+  }, [
+    match.params.slug,
+    courses,
+    authors.length,
+    props.course,
+    loadCourses,
+    loadAuthors,
+  ]);
 
   function formIsValid() {
     const _errors = {};
@@ -96,16 +102,17 @@ function getCourseBySlug(courses, slug) {
 
 const mapStateToProps = (state, ownProps) => {
   const slug = ownProps.match.params.slug;
+  console.log("slug", slug);
   const course = slug
-    ? {
+    ? getCourseBySlug(state.courses, slug)
+    : {
         id: null,
         slug: "",
         title: "",
         authorId: null,
         authorName: null,
         category: "",
-      }
-    : getCourseBySlug(state.courses, slug);
+      };
   const courses =
     state.authors.length === 0
       ? []
